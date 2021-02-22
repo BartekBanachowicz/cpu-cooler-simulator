@@ -6,5 +6,5 @@ from .utilities import (
 )
 
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __authors__ = ["Bartłomiej Banachowicz", "Jakub Błażejowski", "Julia Bielecka"]
