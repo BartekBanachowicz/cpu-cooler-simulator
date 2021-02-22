@@ -139,7 +139,7 @@ def data_iterator(
     air_transitive_temperature = 0.0
     heat_received = 0.0
     computer_transitive_volume = 0.0
-    for i in itertools.count(0, 1):
+    for i in itertools.count(1, 1):
         regulation_error = calculate_regulation_error(parameters["assigned_temperature"], previous_cpu_temperature)
         control_value = calculate_control_value(
             constants["p"], constants["k_p"], constants["t_d"], constants["t_i"],
