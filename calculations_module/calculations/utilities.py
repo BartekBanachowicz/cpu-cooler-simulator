@@ -146,7 +146,7 @@ def data_iterator(
             regulation_error, previous_regulation_error, previous_control_value
         )
         airflow_volume = calculate_airflow_volume(
-            constants["s"] * parameters["fan_number"] * parameters["p"], control_value
+            constants["s"] * parameters["fan_number"] * constants["p"], control_value
         )
         computer_transitive_volume = calculate_computer_transitive_volume(constants["v_f"], airflow_volume)
         air_transitive_temperature = calculate_air_transitive_temperature(
