@@ -1,0 +1,27 @@
+[constants]
+    # k_kr - wzmocnienie krytyczne
+    k_kr = 0.3
+    # t_kr - okres wzmocnienia krytycznego
+    t_kr = 310
+    # tp - okres próbkowania [s]
+    p = 0.1
+    # Ciepło wytworzone [J]
+    q_c = 1.0
+    # Maksymalna prędkość wiatraka [m^3/s]
+    s = 0.052
+    # kp - wzmocnienie regulatora [-]
+    k_p = 0.006
+    # td - czas wyprzedzania [s]
+    t_d = 37.2
+    # ti - czas zdwojenia [s]
+    t_i = 155
+    # gęstość powietrza [kg/m^3]
+    rho_a = 1.293
+    # ciepło właściwe powietrza [J/kg*C]
+    c_a = 721
+    # masa procesora [kg]
+    m_c = 0.010
+    # ciepło właściwe procesora [J/kg*C]
+    c_c = 706
+    # objętość obudowy [m^3]
+    v_f = 0.04
