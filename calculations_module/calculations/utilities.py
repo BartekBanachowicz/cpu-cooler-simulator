@@ -71,7 +71,7 @@ def calculate_control_value(
                 d_e + period / integral_time * regulation_error + derivative_time / period * d_e**2
             )
     )
-    result = min(0.0, result)
+    result = max(min(0.0, result), -1.0)
     return result
 
 
@@ -100,7 +100,7 @@ def calculate_heat_received(
 
 def calculate_airflow_volume(max_airflow_volume: float, control_value: float) -> float:
     result = -control_value * max_airflow_volume
-    return min(max_airflow_volume, result)
+    return max(min(max_airflow_volume, result), 0.0)
 
 
 def calculate_computer_temperature(
