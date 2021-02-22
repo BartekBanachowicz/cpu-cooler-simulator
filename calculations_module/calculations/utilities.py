@@ -1,5 +1,6 @@
 from typing import Callable, Iterator
 import functools
+import itertools
 
 
 def generate_parameters() -> dict:
@@ -138,7 +139,7 @@ def data_iterator(
     air_transitive_temperature = 0.0
     heat_received = 0.0
     computer_transitive_volume = 0.0
-    while True:
+    for i in itertools.count(1, 1):
         regulation_error = calculate_regulation_error(parameters["assigned_temperature"], previous_cpu_temperature)
         control_value = calculate_control_value(
             constants["p"], constants["k_p"], constants["t_d"], constants["t_i"],
@@ -161,7 +162,7 @@ def data_iterator(
             heat_received, parameters["generated_heat"] * constants["p"],
             constants["m_c"], constants["c_c"], previous_cpu_temperature
         )
-        yield control_value, airflow_volume, computer_temperature, cpu_temperature
+        yield i * constants["p"], control_value, airflow_volume, computer_temperature, cpu_temperature
         previous_regulation_error = regulation_error
         previous_control_value = control_value
         previous_computer_temperature = computer_temperature
