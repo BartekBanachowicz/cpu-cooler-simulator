@@ -162,7 +162,7 @@ def data_iterator(
             heat_received, parameters["generated_heat"] * constants["p"],
             constants["m_c"], constants["c_c"], previous_cpu_temperature
         )
-        yield i * constants["p"], control_value, airflow_volume, computer_temperature, cpu_temperature
+        yield i * constants["p"] * 1000, control_value, airflow_volume, computer_temperature, cpu_temperature
         previous_regulation_error = regulation_error
         previous_control_value = control_value
         previous_computer_temperature = computer_temperature
