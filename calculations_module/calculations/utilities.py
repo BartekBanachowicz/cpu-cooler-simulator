@@ -1,4 +1,4 @@
-from typing import Callable, Iterator
+from typing import Callable, Generator, Tuple
 import functools
 import itertools
 
@@ -122,50 +122,55 @@ def calculate_cpu_temperature(
     return result
 
 
-def data_iterator(
-        previous_regulation_error: float, previous_control_value: float, previous_computer_temperature: float,
-        previous_cpu_temperature: float, constants: dict, parameters: dict
-) -> Iterator[tuple]:
+def data_generator(
+        starting_computer_temperature: float, starting_cpu_temperature: float, constants: dict, parameters: dict
+) -> Generator[Tuple[float, float, float, float, float], bool, None]:
     """Produces a generator that yields data sequences based on previous data and parameters.
 
-    :param previous_regulation_error:
-    :param previous_control_value:
-    :param previous_computer_temperature:
-    :param previous_cpu_temperature:
+    :param starting_computer_temperature:
+    :param starting_cpu_temperature:
     :param constants:
     :param parameters:
     :return:
     """
-    air_transitive_temperature = 0.0
-    heat_received = 0.0
-    computer_transitive_volume = 0.0
-    for i in itertools.count(1, 1):
-        regulation_error = calculate_regulation_error(parameters["assigned_temperature"], previous_cpu_temperature)
-        control_value = calculate_control_value(
-            constants["p"], constants["k_p"], constants["t_d"], constants["t_i"],
-            regulation_error, previous_regulation_error, previous_control_value
+    while True:
+        previous_regulation_error = calculate_regulation_error(
+            parameters["assigned_temperature"], starting_cpu_temperature
         )
-        airflow_volume = calculate_airflow_volume(
-            constants["s"] * parameters["fan_number"] * constants["p"], control_value
-        )
-        computer_transitive_volume = calculate_computer_transitive_volume(constants["v_f"], airflow_volume)
-        air_transitive_temperature = calculate_air_transitive_temperature(
-            airflow_volume, parameters["outside_temperature"], computer_transitive_volume, previous_computer_temperature
-        )
-        heat_received = calculate_heat_received(
-            constants["p"], airflow_volume, computer_transitive_volume,
-            air_transitive_temperature, previous_cpu_temperature
-        )
-        computer_temperature = calculate_computer_temperature(
-            heat_received, computer_transitive_volume, constants["rho_a"],
-            constants["c_a"], air_transitive_temperature, airflow_volume
-        )
-        cpu_temperature = calculate_cpu_temperature(
-            heat_received, parameters["generated_heat"] * constants["p"],
-            constants["m_c"], constants["c_c"], previous_cpu_temperature
-        )
-        yield i * constants["p"] * 1000, control_value, airflow_volume, computer_temperature, cpu_temperature
-        previous_regulation_error = regulation_error
-        previous_control_value = control_value
-        previous_computer_temperature = computer_temperature
-        previous_cpu_temperature = cpu_temperature
+        previous_control_value = 0.0
+        previous_computer_temperature = starting_computer_temperature
+        previous_cpu_temperature = starting_cpu_temperature
+        yield 0.0, previous_control_value, 0.0, starting_computer_temperature, starting_cpu_temperature
+        for i in itertools.count(1, 1):
+            regulation_error = calculate_regulation_error(parameters["assigned_temperature"], previous_cpu_temperature)
+            control_value = calculate_control_value(
+                constants["p"], constants["k_p"], constants["t_d"], constants["t_i"],
+                regulation_error, previous_regulation_error, previous_control_value
+            )
+            airflow_volume = calculate_airflow_volume(
+                constants["s"] * parameters["fan_number"] * constants["p"], control_value
+            )
+            computer_transitive_volume = calculate_computer_transitive_volume(constants["v_f"], airflow_volume)
+            air_transitive_temperature = calculate_air_transitive_temperature(
+                airflow_volume, parameters["outside_temperature"],
+                computer_transitive_volume, previous_computer_temperature
+            )
+            heat_received = calculate_heat_received(
+                constants["p"], airflow_volume, computer_transitive_volume,
+                air_transitive_temperature, previous_cpu_temperature
+            )
+            computer_temperature = calculate_computer_temperature(
+                heat_received, computer_transitive_volume, constants["rho_a"],
+                constants["c_a"], air_transitive_temperature, airflow_volume
+            )
+            cpu_temperature = calculate_cpu_temperature(
+                heat_received, parameters["generated_heat"] * constants["p"],
+                constants["m_c"], constants["c_c"], previous_cpu_temperature
+            )
+            stop = yield i * constants["p"] * 1000, control_value, airflow_volume, computer_temperature, cpu_temperature
+            if stop:
+                break
+            previous_regulation_error = regulation_error
+            previous_control_value = control_value
+            previous_computer_temperature = computer_temperature
+            previous_cpu_temperature = cpu_temperature
