@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\calculations_module",
+    "\\calculations_module\\calculations"
   ],
+  "SelectedNode": "\\calculations_module\\calculations\\utilities.py",
   "PreviewInSolutionExplorer": false
 }
